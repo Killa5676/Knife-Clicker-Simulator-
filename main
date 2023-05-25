@@ -1,11 +1,27 @@
 --Farming
 getgenv().autoclick = false
+getgenv().autorebirths = false
+getgenv().buyknives = false
+getgenv().equipbestknife = false
+--Hatching
+getgenv().autoopen = false
+getgenv().equipbestmate = false
 --Misc
 getgenv().claimdaily = false
+getgenv().claimbadges = false
+
 
 
 
 local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
+
+
+local selectedboxes1
+local Boxes = workspace.Boxes:GetChildren()
+local BoxesTable = {}
+for i,v in pairs(Boxes) do
+    table.insert(BoxesTable, v.Name)
+end
 
 local Players = game:GetService("Players")
 local tween_s = game:GetService('TweenService')
@@ -34,17 +50,113 @@ local function AutoClick()
     end)
 end
 
-local function ClaimDaily()
+local function BuyKnives()
     spawn(function()
-        while getgenv().claimdaily == true do
-            game:GetService("ReplicatedStorage"):WaitForChild("Rewards"):WaitForChild("Daily"):WaitForChild("Default"):WaitForChild("Remotes"):WaitForChild("Claim"):InvokeServer()
+        while getgenv().buyknives == true do
+            for i = 1, 100 do
+                local args = {
+                    [1] = tostring(i) -- convert integer i to a string representation
+                }
+            
+                game:GetService("ReplicatedStorage"):WaitForChild("Knives"):WaitForChild("Core"):WaitForChild("Default"):WaitForChild("Remotes"):WaitForChild("Buy"):InvokeServer(unpack(args))
+                
+                
+                wait(0)
+                
+                if getgenv().buyknives == false then
+                    break
+                end
+            end
+        end
+    end)
+end
+
+local function EquipBestKnife()
+    spawn(function()
+        while getgenv().equipbestknife == true do
+            game:GetService("ReplicatedStorage"):WaitForChild("Knives"):WaitForChild("Core"):WaitForChild("Default"):WaitForChild("Remotes"):WaitForChild("SelectBest"):InvokeServer()
             wait(0)
-            if getgenv().claimdaily == false then
+                
+                if getgenv().equipbestknife == false then
+                    break
+                end
+            end
+    end)
+end
+
+local function AutoRebirth()
+    spawn(function()
+        while getgenv().autorebirths == true do
+            game:GetService("ReplicatedStorage"):WaitForChild("Rebirths"):WaitForChild("Core"):WaitForChild("Default"):WaitForChild("Remotes"):WaitForChild("Rebirth"):InvokeServer()
+            wait(0)
+            if getgenv().autorebirths == false then
                 break
             end
         end
     end)
 end
+
+
+local function AutoOpen(egg)
+    spawn(function()
+        while getgenv().autoopen == true do
+            local args = {
+                [1] = egg
+            }
+            
+            game:GetService("ReplicatedStorage"):WaitForChild("Boxes"):WaitForChild("Core"):WaitForChild("Default"):WaitForChild("Remotes"):WaitForChild("Buy"):InvokeServer(unpack(args))
+            
+            wait(0)
+            if getgenv().autoopen == false then
+                break
+            end
+        end
+    end)
+end
+
+local function EquipBestMate()
+    spawn(function()
+        while getgenv().equipbestmate == true do
+            game:GetService("ReplicatedStorage"):WaitForChild("Pets"):WaitForChild("Core"):WaitForChild("Default"):WaitForChild("Remotes"):WaitForChild("SelectBest"):InvokeServer()
+            wait(0)
+            if getgenv().equipbestmate == false then
+                break
+            end
+        end
+    end)
+end
+
+local function ClaimDaily()
+    spawn(function()
+        while getgenv().autohatch == true do
+            game:GetService("ReplicatedStorage"):WaitForChild("Rewards"):WaitForChild("Daily"):WaitForChild("Default"):WaitForChild("Remotes"):WaitForChild("Claim"):InvokeServer()
+            wait(0)
+            if getgenv().autohatch == false then
+                break
+            end
+        end
+    end)
+end
+
+local function ClaimBadges()
+    spawn(function()
+        while getgenv().claimbadges == true do
+            for i = 1, 50 do
+            local args = {
+                [1] = tostring(i)
+            }
+            
+            game:GetService("ReplicatedStorage"):WaitForChild("Badges"):WaitForChild("Core"):WaitForChild("Default"):WaitForChild("Remotes"):WaitForChild("Claim"):InvokeServer(unpack(args))
+            
+            wait(0)
+            if getgenv().claimbadges == false then
+                break
+            end
+        end
+        end
+    end)
+end
+
 
 local Window = OrionLib:MakeWindow({Name = "Knife Clicker Simulator 🔪", HidePremium = false, SaveConfig = true, ConfigFolder = "Killa Hub"})
 
@@ -52,6 +164,10 @@ local Tab = Window:MakeTab({
 	Name = "Farming",
 	Icon = "rbxassetid://4483345998",
 	PremiumOnly = false
+})
+
+local Section = Tab:AddSection({
+	Name = "Main"
 })
 
 Tab:AddToggle({
@@ -64,6 +180,96 @@ Tab:AddToggle({
         AutoClick()
     end
 	end    
+})
+
+Tab:AddToggle({
+	Name = "AutoRebirth",
+	Default = false,
+	Callback = function(bool)
+		getgenv().autorebirths = bool
+    print("AutoRebirth is", bool)
+    if bool then
+        AutoRebirth()
+    end
+	end    
+})
+
+Tab:AddToggle({
+	Name = "AutoBuyKnives",
+	Default = false,
+	Callback = function(bool)
+		getgenv().buyknives = bool
+    print("AutoBuyKnives is", bool)
+    if bool then
+        BuyKnives()
+    end
+	end    
+})
+
+local Section = Tab:AddSection({
+	Name = "Misc"
+})
+
+Tab:AddToggle({
+	Name = "AutoEquipBestKnife",
+	Default = false,
+	Callback = function(bool)
+		getgenv().equipbestknife = bool
+    print("AutoEquipBestKnife is", bool)
+    if bool then
+        EquipBestKnife()
+    end
+	end    
+})
+
+
+
+local Tab = Window:MakeTab({
+	Name = "Hatching",
+	Icon = "rbxassetid://4483345998",
+	PremiumOnly = false
+})
+
+local Section = Tab:AddSection({
+	Name = "Main"
+})
+
+Tab:AddDropdown({
+	Name = "SelectBoxes",
+	Default = "1",
+	Options = BoxesTable,
+	Callback = function(value)
+        selectedboxes1 = value
+		print(value)
+	end    
+})
+
+Tab:AddToggle({
+	Name = "AutoOpen(1)",
+	Default = false,
+	Callback = function(bool)
+		getgenv().autoopen = bool
+    print("AutoOpen is", bool)
+    if bool then
+        AutoOpen(selectedboxes1)
+	end 
+end   
+})
+
+local Section = Tab:AddSection({
+	Name = "Misc"
+})
+
+Tab:AddToggle({
+	Name = "AutoEquipBestMate",
+	Default = false,
+	Callback = function(bool)
+		getgenv().equipbestmate = bool
+    print("AutoEquipBestMate is", bool)
+    if bool then
+        EquipBestMate()
+	end 
+end   
 })
 
 local Tab = Window:MakeTab({
@@ -80,6 +286,18 @@ Tab:AddToggle({
     print("ClaimDailyRewards is", bool)
     if bool then
         ClaimDaily()
+    end
+	end    
+})
+
+Tab:AddToggle({
+	Name = "ClaimBadges",
+	Default = false,
+	Callback = function(bool)
+		getgenv().claimbadges = bool
+    print("ClaimBadges is", bool)
+    if bool then
+        ClaimBadges()
     end
 	end    
 })
