@@ -1,4 +1,8 @@
+--Farming
 getgenv().autoclick = false
+--Misc
+getgenv().claimdaily = false
+
 
 
 local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
@@ -30,6 +34,17 @@ local function AutoClick()
     end)
 end
 
+local function ClaimDaily()
+    spawn(function()
+        while getgenv().claimdaily == true do
+            game:GetService("ReplicatedStorage"):WaitForChild("Rewards"):WaitForChild("Daily"):WaitForChild("Default"):WaitForChild("Remotes"):WaitForChild("Claim"):InvokeServer()
+            wait(0)
+            if getgenv().claimdaily == false then
+                break
+            end
+        end
+    end)
+end
 
 local Window = OrionLib:MakeWindow({Name = "Knife Clicker Simulator 🔪", HidePremium = false, SaveConfig = true, ConfigFolder = "Killa Hub"})
 
@@ -47,6 +62,24 @@ Tab:AddToggle({
     print("AutoClick is", bool)
     if bool then
         AutoClick()
+    end
+	end    
+})
+
+local Tab = Window:MakeTab({
+	Name = "Misc",
+	Icon = "rbxassetid://4483345998",
+	PremiumOnly = false
+})
+
+Tab:AddToggle({
+	Name = "ClaimDailyRewards",
+	Default = false,
+	Callback = function(bool)
+		getgenv().claimdaily = bool
+    print("ClaimDailyRewards is", bool)
+    if bool then
+        ClaimDaily()
     end
 	end    
 })
