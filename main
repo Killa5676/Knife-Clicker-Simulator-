@@ -1,0 +1,52 @@
+getgenv().autoclick = false
+
+
+local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
+
+local Players = game:GetService("Players")
+local tween_s = game:GetService('TweenService')
+local tween_info = TweenInfo.new(0.1, Enum.EasingStyle.Linear)
+
+local lp = Players.LocalPlayer
+
+
+function Tween(v)
+    if lp.Character and lp.Character:FindFirstChild('HumanoidRootPart') then
+        local cf = CFrame.new(v)
+        local a = tween_s:Create(lp.Character.HumanoidRootPart, tween_info, {CFrame = cf})
+        a:Play()
+    end
+end
+
+local function AutoClick()
+    spawn(function()
+        while getgenv().autoclick == true do
+            game:GetService("ReplicatedStorage"):WaitForChild("Knives"):WaitForChild("Clicker"):WaitForChild("Default"):WaitForChild("Remotes"):WaitForChild("Click"):InvokeServer()
+            wait(0)
+            if getgenv().autoclick == false then
+                break
+            end
+        end
+    end)
+end
+
+
+local Window = OrionLib:MakeWindow({Name = "Knife Clicker Simulator 🔪", HidePremium = false, SaveConfig = true, ConfigFolder = "Killa Hub"})
+
+local Tab = Window:MakeTab({
+	Name = "Farming",
+	Icon = "rbxassetid://4483345998",
+	PremiumOnly = false
+})
+
+Tab:AddToggle({
+	Name = "AutoClick",
+	Default = false,
+	Callback = function(bool)
+		getgenv().autoclick = bool
+    print("AutoClick is", bool)
+    if bool then
+        AutoClick()
+    end
+	end    
+})
