@@ -158,7 +158,7 @@ local function ClaimBadges()
 end
 
 
-local Window = OrionLib:MakeWindow({Name = "Knife Clicker Simulator 🔪", HidePremium = false, SaveConfig = true, ConfigFolder = "Killa Hub"})
+local Window = OrionLib:MakeWindow({Name = "Knife Clicker Simulator 🔪   By Killa#2836", HidePremium = false, SaveConfig = true, ConfigFolder = "Killa Hub"})
 
 local Tab = Window:MakeTab({
 	Name = "Farming",
@@ -301,3 +301,5 @@ Tab:AddToggle({
     end
 	end    
 })
+
+OrionLib:Init()
