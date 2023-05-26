@@ -23,6 +23,13 @@ for i,v in pairs(Boxes) do
     table.insert(BoxesTable, v.Name)
 end
 
+local selectedworld
+local World = workspace.Areas:GetDescendants()
+local WorldTable = {}
+for i,v in pairs(World) do
+    table.insert(WorldTable, v.Name)
+end
+
 local Players = game:GetService("Players")
 local tween_s = game:GetService('TweenService')
 local tween_info = TweenInfo.new(0.1, Enum.EasingStyle.Linear)
@@ -38,12 +45,45 @@ function Tween(v)
     end
 end
 
+function getcurrentPlayerPOS()
+    local plyr = game.Players.LocalPlayer
+    if plyr.Character then
+        return plyr.Character.HumanoidRootPart
+    end
+    return false
+end
+
+function teleporto(placeCframe)
+    local plyr = game.Players.LocalPlayer
+    if plyr.Character then
+        plyr.Character.HumanoidRootPart.CFrame = placeCframe
+    end
+end
+
+function teleportworld(world)
+    spawn(function()
+        teleporto(workspace.Areas[world].CFrame)
+end)
+end
+
 local function AutoClick()
     spawn(function()
+        local args = {
+            [1] = "AutoClick"
+        }
+        
+        game:GetService("ReplicatedStorage"):WaitForChild("Settings"):WaitForChild("Core"):WaitForChild("Default"):WaitForChild("Remotes"):WaitForChild("Update"):InvokeServer(unpack(args))
+        wait(0)
         while getgenv().autoclick == true do
             game:GetService("ReplicatedStorage"):WaitForChild("Knives"):WaitForChild("Clicker"):WaitForChild("Default"):WaitForChild("Remotes"):WaitForChild("Click"):InvokeServer()
             wait(0)
             if getgenv().autoclick == false then
+                local args = {
+                    [1] = "AutoClick"
+                }
+                
+                game:GetService("ReplicatedStorage"):WaitForChild("Settings"):WaitForChild("Core"):WaitForChild("Default"):WaitForChild("Remotes"):WaitForChild("Update"):InvokeServer(unpack(args))
+                wait(0)
                 break
             end
         end
@@ -222,7 +262,40 @@ Tab:AddToggle({
 	end    
 })
 
+local Tab = Window:MakeTab({
+	Name = "Teleport",
+	Icon = "rbxassetid://4483345998",
+	PremiumOnly = false
+})
 
+Tab:AddDropdown({
+	Name = "Select World",
+	Default = "1",
+	Options = WorldTable,
+	Callback = function(value)
+        selectedworld = value
+    print(value)
+	end    
+})
+Tab:AddButton({
+	Name = "Teleport Selected World",
+	Callback = function()
+        if selectedworld == "1" then
+            teleporto(CFrame.new(54.85422134399414, 6.355546951293945, -302.8271484375))
+        elseif selectedworld == "4" then
+            teleporto(CFrame.new(31.995576858520508, 44.47704315185547, 150.4325408935547))
+        
+        elseif selectedworld == "6" then
+            teleporto(CFrame.new(19.610706329345703, 89.62969970703125, 522.5260620117188))
+
+        elseif selectedworld == "7" then
+            teleporto(CFrame.new(21.47782325744629, 106.6979751586914, 709.2057495117188))
+        else
+
+        teleportworld(selectedworld)
+        end
+  	end    
+})
 
 local Tab = Window:MakeTab({
 	Name = "Hatching",
